@@ -31,7 +31,7 @@ services:
    - TZ=Australia/Sydney
   image: linuxserver/sonarr
  
- # Fix up
+ # Fix up! Prts & env
  prowlarr:
   container_name: Prowlarr
   restart: unless-stopped
@@ -39,10 +39,12 @@ services:
    - x:x
   volumes:
    - /Containers/Prowlarr/config:/config
+  environment:
+   - #something
   image: linuxserver/prowlarr
 
 
-# Fix up
+ # Fix up! Prts & env
  deluge:
   container_name: Deluge
   restart: unless-stopped
@@ -51,6 +53,20 @@ services:
   volumes:
    - /Containers/Deluge/config:/config
    - /Containers/Sonarr/downloads:/downloads
+  environment:
+   - #something
   image: TBC
+
+# Fix up! #Prts & env w/ image
+ overseerr:
+  container_name: Overseerr
+  restart: unless-stopped
+  ports:
+   - x:x
+  volumes:
+   - /Containers/Overseerr/config:/config
+  environment:
+   - #something
+  image: #something
 
 

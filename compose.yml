@@ -1,0 +1,56 @@
+
+version: '3'
+services:
+ radarr:
+  container_name: Radarr
+  restart: unless-stopped
+  ports:
+   - 7878:7878
+  volumes:
+    - /Containers/Radarr/config:/config
+    - /Share/movies:/movies
+    - /Containers/Sonarr/downloads:/downloads
+  environment:
+   - PUID=1000
+   - PGID=1000
+   - TZ=Australia/Sydney
+  image: linuxserver/radarr
+ 
+ sonarr:
+  container_name: Sonarr
+  restart: unless-stopped
+  ports:
+   - 8989:8989
+  volumes:
+    - /Containers/Sonarr/config:/config
+    - /Share/tv:/tv
+    - /Containers/Sonarr/downloads:/downloads
+  environment:
+   - PUID=1000
+   - PGID=1000
+   - TZ=Australia/Sydney
+  image: linuxserver/sonarr
+ 
+ # Fix up
+ prowlarr:
+  container_name: Prowlarr
+  restart: unless-stopped
+  ports:
+   - x:x
+  volumes:
+   - /Containers/Prowlarr/config:/config
+  image: linuxserver/prowlarr
+
+
+# Fix up
+ deluge:
+  container_name: Deluge
+  restart: unless-stopped
+  ports:
+   - x:x
+  volumes:
+   - /Containers/Deluge/config:/config
+   - /Containers/Sonarr/downloads:/downloads
+  image: TBC
+
+

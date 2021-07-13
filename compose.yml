@@ -6,6 +6,9 @@
 # Replace <PASSWORD> with PIA Password.
 # Replace <LAN> with LAN network address using CIDR Notation.
 # Access via the <docker_node_IP>:<Container_Port> for each service.
+#
+# NOTE: Ensure volume dirs created prior to running
+# NOTE: May need to edit the preferences for deluge to go to /downloads instead of /data
 #--------------------------------------------------------------------#
 
 version: '3'
@@ -21,7 +24,7 @@ services:
    - 58946:58946
   volumes:
    - /Containers/Deluge/config:/config
-   - /Share/Containers/Sonarr/downloads:/data
+   - /Share/Containers/Sonarr/downloads:/downloads
    - /etc/localtime:/etc/localtime:ro
   environment:
    - VPN_ENABLED=yes

@@ -1,11 +1,16 @@
-
-version: '3'
-services:
+#--------------------------------------------------------------------#
+# Information
+#--------------------------------------------------------------------#
 # Alter the following in the deluge container and ensure all of the volume mounts are created prior to running.
 # Replace <USERNAME> with PIA Username.
 # Replace <PASSWORD> with PIA Password.
 # Replace <LAN> with LAN network address using CIDR Notation.
 # Access via the <docker_node_IP>:<Container_Port> for each service.
+#--------------------------------------------------------------------#
+
+version: '3'
+services:
+
  deluge:
   container_name: Deluge-PIA
   restart: unless-stopped

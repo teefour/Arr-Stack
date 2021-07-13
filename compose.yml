@@ -1,15 +1,52 @@
 
 version: '3'
 services:
+# Alter the following in the deluge container and ensure all of the volume mounts are created prior to running.
+# Replace <USERNAME> with PIA Username.
+# Replace <PASSWORD> with PIA Password.
+# Replace <LAN> with LAN network address using CIDR Notation.
+# Access via the <docker_node_IP>:<Container_Port> for each service.
+ deluge:
+  container_name: Deluge-PIA
+  restart: unless-stopped
+  ports:
+   - 8112:8112
+   - 8118:8118
+   - 58846:58846
+   - 58946:58946
+  volumes:
+   - /Containers/Deluge/config:/config
+   - /Share/Containers/Sonarr/downloads:/data
+   - /etc/localtime:/etc/localtime:ro
+  environment:
+   - VPN_ENABLED=yes
+   - VPN_USER=<USERNAME>
+   - VPN_PASS=<PASSWORD>
+   - VPN_PROV=pia
+   - VPN_CLIENT=openvpn
+   - STRICT_PORT_FORWARD=yes
+   - ENABLE_PRIVOXY=yes
+   - LAN_NETWORK=<LAN>/24
+   - NAME_SERVERS=209.222.18.222,84.200.69.80,37.235.1.174,1.1.1.1,209.222.18.218,37.235.1.177,84.200.70.40,1.0.0.1
+   - DELUGE_DAEMON_LOG_LEVEL=info
+   - DELUGE_WEB_LOG_LEVEL=info
+   - DEBUG=false
+   - UMASK=000
+   - PGUID=0
+   - PGID=0
+  image: binhex/arch-delugevpn
+  
  radarr:
+  depends_on:
+   - deluge
   container_name: Radarr
   restart: unless-stopped
   ports:
    - 7878:7878
   volumes:
     - /Containers/Radarr/config:/config
-    - /Share/movies:/movies
-    - /Containers/Sonarr/downloads:/downloads
+    - /Share/Media/movies:/movies
+    - /Share/Containers/Sonarr/downloads:/downloads
   environment:
    - PUID=1000
    - PGID=1000
@@ -17,56 +54,52 @@ services:
   image: linuxserver/radarr
  
  sonarr:
+  depends_on:
+   - deluge
   container_name: Sonarr
   restart: unless-stopped
   ports:
    - 8989:8989
   volumes:
     - /Containers/Sonarr/config:/config
-    - /Share/tv:/tv
-    - /Containers/Sonarr/downloads:/downloads
+    - /Share/Media/tv:/tv
+    - /Share/Containers/Sonarr/downloads:/downloads
   environment:
    - PUID=1000
    - PGID=1000
    - TZ=Australia/Sydney
   image: linuxserver/sonarr
  
- # Fix up! Prts & env
  prowlarr:
+  depends_on:
+   - radarr
+   - sonarr
   container_name: Prowlarr
   restart: unless-stopped
   ports:
-   - x:x
+   - 9696:9696
   volumes:
    - /Containers/Prowlarr/config:/config
   environment:
-   - #something
+   - PUID=1000
+   - PGID=1000
+   - TZ=Australia/Sydney
   image: linuxserver/prowlarr
 
-
- # Fix up! Prts & env
- deluge:
-  container_name: Deluge
-  restart: unless-stopped
-  ports:
-   - x:x
-  volumes:
-   - /Containers/Deluge/config:/config
-   - /Containers/Sonarr/downloads:/downloads
-  environment:
-   - #something
-  image: TBC
-
-# Fix up! #Prts & env w/ image
  overseerr:
+  depends_on:
+   - sonarr
+   - radarr
+   - deluge
   container_name: Overseerr
   restart: unless-stopped
   ports:
-   - x:x
+   - 3579:3579
   volumes:
    - /Containers/Overseerr/config:/config
   environment:
-   - #something
-  image: #something
+   - LOG_LEVEL=info
+   - TZ=Australia/Sydney
+  image: sctx/overseerr
 
 
